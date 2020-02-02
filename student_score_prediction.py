@@ -6,14 +6,26 @@ of factors. This will be a regression based ML project using sklearn.
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Import the data and inspect it
 maths = pd.read_csv(r'./student-mat.csv', sep=';')
 print(maths.head())
 print(maths.info())
+
+# Lets do some visual-EDA on our data which we will use
+
+fig, axes = plt.subplots(2, 2, figsize=(7,7))
+
+sns.regplot('G2', 'G3', data=maths, ax=axes[0, 0]).set_title('G2 vs G3 grades')
+sns.swarmplot('failures', 'G3', data=maths, ax=axes[1, 0]).set_title('Effect of Failures on Final Grade')
+sns.swarmplot('famrel', 'G3', data=maths, ax=axes[0, 1]).set_title('Effect of Family Relationships on Final Grade')
+sns.swarmplot('studytime', 'G3', data=maths, ax=axes[1, 1]).set_title('Effect of Studytime on Final Grade')
+plt.tight_layout()
+plt.show()
 
 """
 Important to note here that the data is generally very well structured.
@@ -24,7 +36,7 @@ data for a more in-depth project.
 """
 
 maths = maths.select_dtypes('int64')
-maths = maths[['studytime', 'failures', 'absences', 'G1', 'G2', 'G3']]
+maths = maths[['famrel', 'studytime', 'failures', 'absences', 'G1', 'G2', 'G3']]
 print(maths.info())
 
 # set our prediction of a students final score (G3)
@@ -45,12 +57,23 @@ X_train, X_test, y_train, y_test = train_test_split(
 # Now we need to initiate our model and train it
 
 linear = LinearRegression()
-# Cross-Valadation testing
-
-cv_scores = cross_val_score(linear, X, y, cv=5)
-print('The CV R^2 are: ', cv_scores)
-print('The mean R^2 from CV is: ', np.mean(cv_scores))
 linear.fit(X_train, y_train)
+
+# Lets take a look at how well this model preforms
 print("The R^2 is: ", linear.score(X_test, y_test))
+coeff = linear.coef_
+intercept = linear.intercept_
+
+for i in range(len(coeff)):
+    print(maths.columns[i], ': ', coeff[i])
+print('The intercept of our slope is: ', intercept)
+
+"""
+In conclusion our model explains 83% of the inputs into a students final
+score. What we can clearly see is the biggest factor going into the estimation
+is the score that they would get in G2. What does look interesting is the fact that
+studytime is negatively related to the grade that they get, however this is a very
+small factor. 
+"""
 
 

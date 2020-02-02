@@ -28,7 +28,7 @@ included all integer values in the hope that the Lasso
 algorithm will filter out the ones that are not needed.
 """
 maths = maths.select_dtypes('int64')
-print(maths.info())
+print(maths.describe())
 
 # set our prediction to G3 and split the data
 
