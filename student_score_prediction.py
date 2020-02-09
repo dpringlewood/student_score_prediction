@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error as MSE
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -63,6 +64,10 @@ linear.fit(X_train, y_train)
 print("The R^2 is: ", linear.score(X_test, y_test))
 coeff = linear.coef_
 intercept = linear.intercept_
+
+y_pred = linear.predict(X_test)
+rmse = (MSE(y_test, y_pred))**(1/2)
+print('The root mean-squared-error "RMSE" is: ', rmse)
 
 for i in range(len(coeff)):
     print(maths.columns[i], ': ', coeff[i])
